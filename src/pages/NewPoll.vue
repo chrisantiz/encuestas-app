@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <p class="text-h4 text-white text-center">Crear nueva encuesta</p>
+    <p class="text-h4 text-grey-9 text-center">Crear nueva encuesta</p>
     <q-card class="shadow-10">
       <q-card-section>
         <q-form>
@@ -32,7 +32,9 @@
                       <p
                         class="text-caption text-weight-light"
                       >Serán aquellas preguntas por las cuales usted busca identificar a su encuestado; ejemplo: ciudad, edad, sexo etcétera. Con estos datos luego podrá filtrar y obtener sus resultados (ya tabulados) apuntando a cierta población.</p>
-                      <q-separator />
+                      <!-- añadir nueva pregunta filtrable -->
+                      <q-btn label="Añadir" icon="add" @click="openModalAddQuestion('filter')" />
+                      <q-separator class="q-my-md" />
                     </q-card-section>
                   </q-card>
                 </q-expansion-item>
@@ -49,10 +51,9 @@
                       <p
                         class="text-caption text-weight-light"
                       >Añada los puntos sobre los cuales quiere obtener la opinión del encuestado.</p>
-                      <q-separator />
-                    </q-card-section>
-                    <q-card-section>
-                      <p>hey</p>
+                      <!-- añadir nueva pregunta filtrable -->
+                      <q-btn label="Añadir" icon="add" @click="openModalAddQuestion('default')" />
+                      <q-separator class="q-my-md" />
                     </q-card-section>
                   </q-card>
                 </q-expansion-item>
@@ -62,18 +63,64 @@
         </q-form>
       </q-card-section>
     </q-card>
+
+    <!-- modal para agregar nueva pregunta -->
+    <q-dialog v-model="dialog.addQuestion">
+      <q-card class="bg-white">
+        <q-toolbar>
+          <q-avatar>
+            <q-icon name="add" />
+          </q-avatar>
+
+          <q-toolbar-title>
+            <span class="text-weight-bold">Añadir</span>
+            pregunta ({{ questionType === 'filter' ? 'filtrable' : 'encuesta' }})
+          </q-toolbar-title>
+
+          <q-btn flat round dense icon="close" v-close-popup />
+        </q-toolbar>
+
+        <q-card-section>
+          <QuestionAddItem :type="questionType" />
+        </q-card-section>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
-<script>
+<script lang="ts">
 import { value } from 'vue-function-api';
+import QuestionAddItem from '../components/QuestionAddItem.vue';
 export default {
+  components: { QuestionAddItem },
   setup() {
+    /* --------- state ------- */
+    /** datos de la nueva encuesta */
     const newPoll = value({ name: '' });
-    // abrir automáticamente el item de preguntas filtrables
+    /** abrir automáticamente el item de preguntas filtrables */
     const expandedItem = value(true);
+    /** dialogs */
+    const dialog = value({ addQuestion: false });
+    /** tipo de pregunta a agregar */
+    const questionType = value<'filter' | 'default'>('filter');
 
-    return { newPoll, expandedItem };
+    /* ---------- computed -------- */
+
+    /* ---------- methods -------- */
+
+    /** abrir modal para añadir pregunta */
+    function openModalAddQuestion(type: 'filter' | 'default') {
+      dialog.value.addQuestion = true;
+      questionType.value = type;
+    }
+
+    return {
+      newPoll,
+      expandedItem,
+      dialog,
+      questionType,
+      openModalAddQuestion
+    };
   }
 };
 </script>

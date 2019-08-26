@@ -12,7 +12,7 @@ module.exports = function(ctx) {
     // --> boot files are part of "main.js"
     boot: ['i18n', 'axios', 'vue-function-api'],
 
-    css: ['app.styl', 'gradients.styl'],
+    css: ['app.styl'],
 
     extras: [
       // 'ionicons-v4',
@@ -52,10 +52,12 @@ module.exports = function(ctx) {
         'QForm',
         'QInput',
         'QSeparator',
-        'QExpansionItem'
+        'QExpansionItem',
+        'QDialog',
+        'QAvatar',
       ],
 
-      directives: ['Ripple'],
+      directives: ['Ripple', 'ClosePopup'],
 
       // Quasar plugins
       plugins: ['Notify']

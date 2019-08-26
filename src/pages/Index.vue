@@ -2,8 +2,8 @@
   <q-page padding>
     <!-- títulos -->
     <div>
-      <p class="text-h3 text-white text-center q-pt-md">Encuestas App</p>
-      <p class="text-h6 text-white text-center text-weight-light">{{ classesByScreenSize.subtitle }}</p>
+      <p class="text-h3 text-center q-pt-md">Encuestas App</p>
+      <p class="text-h6 text-grey-8 text-center text-weight-light">{{ classesByScreenSize.subtitle }}</p>
     </div>
 
     <!-- contenedor de botones -->

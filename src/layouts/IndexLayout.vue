@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh lpR fFf" class="gradient-monolid">
+  <q-layout view="hHh lpR fFf" class="gradient-delicate">
     <q-page-container>
       <router-view />
     </q-page-container>
