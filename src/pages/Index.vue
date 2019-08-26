@@ -18,7 +18,7 @@
       </div>
       <!-- botón CREAR NUEVA -->
       <div class="text-center q-mt-md">
-        <q-btn label="Crear nueva" size="md" color="black" text-color="info" />
+        <q-btn label="Crear nueva" size="md" color="black" text-color="info" to="/new-poll" />
       </div>
     </div>
   </q-page>
