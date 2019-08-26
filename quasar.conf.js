@@ -55,6 +55,8 @@ module.exports = function(ctx) {
         'QExpansionItem',
         'QDialog',
         'QAvatar',
+        'QSelect',
+        'QTooltip'
       ],
 
       directives: ['Ripple', 'ClosePopup'],
