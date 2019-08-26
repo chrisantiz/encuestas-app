@@ -12,7 +12,7 @@ module.exports = function(ctx) {
     // --> boot files are part of "main.js"
     boot: ['i18n', 'axios', 'vue-function-api'],
 
-    css: ['app.styl'],
+    css: ['app.styl', 'gradients.styl'],
 
     extras: [
       // 'ionicons-v4',
@@ -58,7 +58,7 @@ module.exports = function(ctx) {
 
     build: {
       scopeHoisting: true,
-      // vueRouterMode: 'history',
+      vueRouterMode: 'history',
       // vueCompiler: true,
       // gzip: true,
       // analyze: true,
