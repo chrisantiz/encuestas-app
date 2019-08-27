@@ -6,7 +6,8 @@
       </q-avatar>
 
       <q-toolbar-title>
-        {{ $props.title }}
+        <!-- personalizar el título -->
+        {{ title }}
       </q-toolbar-title>
 
       <q-btn flat round dense icon="close" v-close-popup />
@@ -15,10 +16,20 @@
     <!-- contenido -->
     <q-card-section>
       <q-form>
-        <div class="column q-col-gutter-md">
-          <div class="col">
-            <p class="text-body1">¿Tiene usted hijos?</p>
-            <p>Sí</p>
+        <div class="column q-gutter-md">
+          <!-- información de la pregunta (y respuesta) padre -->
+          <div
+            v-if="$props.type === 'child'"
+            class="col bg-teal-1 border-radius"
+          >
+            <p class="text-center text-body1 text-weight-light">
+              Pregunta padre
+            </p>
+            <p class="text-center text-body2 q-my-none">¿Tiene usted hijos?</p>
+            <p class="text-center text-weight-light">
+              Sí, un motón de hijos de puta
+            </p>
+            <!-- <p class="text-center text-weight-regular">Sí</p> -->
           </div>
           <div class="col">
             <q-input
@@ -26,13 +37,6 @@
               autofocus
               autogrow
               label="Ingrese la pregunta a realizar"
-            />
-          </div>
-          <div v-if="$props.type === 'default'" class="col">
-            <q-select
-              v-model="form.htmlElement"
-              :options="selectValues"
-              label="Tipo de elemento HTML a utilizar"
             />
           </div>
           <div class="col">
@@ -176,7 +180,7 @@
 </template>
 
 <script lang="ts">
-import { value, onCreated, PropType } from 'vue-function-api';
+import { value, onCreated, PropType, computed } from 'vue-function-api';
 import { Context } from 'vue-function-api/dist/types/vue';
 import {
   Form,
@@ -187,25 +191,41 @@ import { PropValidator, RecordPropsDefinition } from 'vue/types/options';
 
 export default {
   props: {
-    type: { type: String, required: true },
-    title: { type: String, required: false }
+    type: { type: String, required: true }
   },
   setup(props: any, ctx: Context) {
     /* ------------ state --------- */
     /** propiedades de una nueva pregunta */
     const form = value<Form>({
-      question: { title: '', options: [] },
-      htmlElement: ''
+      question: { title: '', options: [] }
     });
     /* opción digitada por el usuario */
     const option = value('');
-    /** valores del select «elemento HTML» */
-    const selectValues = value<string[]>(['Select', 'Radio']);
     // dialog
     const dialog = value<QuestionAddDialog>({
       parent: false,
       editOption: { open: false, text: '', index: -1 },
       deleteOption: false
+    });
+
+    /* ------------ computed --------- */
+    const title = computed(() => {
+      let str = '';
+      switch (props.type) {
+        case 'filter':
+          str = 'filtrable';
+          break;
+
+        case 'default':
+          str = 'encuesta';
+          break;
+
+        case 'child':
+          str = 'hija';
+          break;
+      }
+
+      return `Agregar nueva pregunta (${str})`;
     });
 
     /* ----------- cycle life ------- */
@@ -259,10 +279,10 @@ export default {
       form,
       option,
       addOption,
-      selectValues,
       dialog,
       openDialogOptionAction,
-      actionOption
+      actionOption,
+      title
     };
   }
 };
@@ -271,5 +291,9 @@ export default {
 <style lang="stylus" scoped>
 .border-bottom {
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.border-radius {
+  border-radius: 5px;
 }
 </style>

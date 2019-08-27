@@ -79,12 +79,12 @@
 
     <!-- modal para agregar nueva pregunta -->
     <q-dialog v-model="dialog.addQuestion" persistent>
-      <QuestionAddItem :type="questionType" title="Hola mundo" @addchild="onAddNewChild" />
+      <QuestionAddItem :type="questionType" @addchild="onAddNewChild" />
     </q-dialog>
 
     <!-- modal para agregar pregunta hija -->
     <q-dialog v-model="dialog.addQuestionChild" persistent>
-      <QuestionAddItem :type="questionType" title="Pregunta hija" />
+      <QuestionAddItem type="child" />
     </q-dialog>
   </q-page>
 </template>

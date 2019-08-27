@@ -1,7 +1,6 @@
 /** propiedades del formulario para crear una nueva pregunta */
 export interface Form {
   question: Question;
-  htmlElement: string;
 }
 
 /** propiedades de una pregunta */
