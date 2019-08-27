@@ -1,156 +1,194 @@
 <template>
-  <section>
-    <q-form>
-      <div class="column q-col-gutter-md">
-        <div class="col">
-          <q-input
-            v-model="form.question.title"
-            autofocus
-            autogrow
-            label="Ingrese la pregunta a realizar"
-          />
-        </div>
-        <div v-if="$props.type === 'default'" class="col">
-          <q-select
-            v-model="form.htmlElement"
-            :options="selectValues"
-            label="Tipo de elemento HTML a utilizar"
-          />
-        </div>
-        <div class="col">
-          <q-input
-            v-model="option"
-            label="Opciones para responder la pregunta"
-            hint="Digite una opción seguida de «enter» para agregarla"
-            @keydown.enter.prevent="addOption($event)"
-            autogrow
-          />
-        </div>
-        <!-- opciones añadidas -->
-        <div class="col">
-          <q-list bordered separator>
-            <transition-group appear name="lightSpeed">
-              <q-item
-                dense
-                v-ripple
-                v-for="(option, index) in form.question.options"
-                :key="index"
-                :class="{
-                  'border-bottom': index + 1 !== form.question.options.length
-                }"
-              >
-                <q-item-section>
-                  <q-item-label
-                    class="text-overline text-grey-8 text-weight-light"
-                    >Opción #{{ index + 1 }}</q-item-label
-                  >
-                  <q-item-label
-                    caption
-                    lines="2"
-                    class="text-grey-9"
-                    style="font-size: 14px;"
-                    >{{ option }}</q-item-label
-                  >
-                </q-item-section>
+  <q-card class="bg-white" style="overflow: hidden;">
+    <q-toolbar>
+      <q-avatar>
+        <q-icon name="add" />
+      </q-avatar>
 
-                <!-- acciones a ejecutar en las opciones -->
-                <!-- editar -->
-                <q-item-section side top>
-                  <q-item-label caption>
-                    <q-btn
-                      flat
-                      icon="edit"
-                      round
-                      size="sm"
-                      color="teal"
-                      @click="openDialogOptionAction(option, index, 'edit')"
-                    >
-                      <q-tooltip>Editar opción</q-tooltip>
-                    </q-btn>
-                  </q-item-label>
-                </q-item-section>
-                <!-- eliminar -->
-                <q-item-section side top style="padding-left: 0;">
-                  <q-item-label caption>
-                    <q-btn
-                      flat
-                      icon="delete"
-                      color="red"
-                      round
-                      size="sm"
-                      @click="openDialogOptionAction(option, index, 'delete')"
-                    >
-                      <q-tooltip>Eliminar opción</q-tooltip>
-                    </q-btn>
-                  </q-item-label>
-                </q-item-section>
-                <!-- fin acciones a ejecutar en las opciones -->
-              </q-item>
-            </transition-group>
-          </q-list>
-        </div>
-        <!-- fin opciones añadidas -->
-      </div>
+      <q-toolbar-title>
+        {{ $props.title }}
+      </q-toolbar-title>
 
-      <!-- dialog para modificar una opción -->
-      <q-dialog v-model="dialog.editOption.open" persistent>
-        <q-card style="min-width: 400px">
-          <q-card-section>
-            <div class="text-h6">Tu nuevo valor</div>
-          </q-card-section>
+      <q-btn flat round dense icon="close" v-close-popup />
+    </q-toolbar>
 
-          <q-card-section>
+    <!-- contenido -->
+    <q-card-section>
+      <q-form>
+        <div class="column q-col-gutter-md">
+          <div class="col">
+            <p class="text-body1">¿Tiene usted hijos?</p>
+            <p>Sí</p>
+          </div>
+          <div class="col">
             <q-input
-              dense
-              v-model="dialog.editOption.text"
+              v-model="form.question.title"
               autofocus
-              @keyup.enter="actionOption('edit')"
+              autogrow
+              label="Ingrese la pregunta a realizar"
             />
-          </q-card-section>
-
-          <q-card-actions align="right" class="text-primary">
-            <q-btn flat label="Cancelar" v-close-popup />
-            <q-btn flat label="Confirmar" v-close-popup />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-
-      <!-- diálogo para eliminar una opción -->
-      <q-dialog v-model="dialog.deleteOption" persistent>
-        <q-card>
-          <q-card-section class="row items-center">
-            <q-avatar icon="delete" color="primary" text-color="white" />
-            <span class="q-ml-sm"
-              >¿Está seguro de eliminar la opción actual?</span
-            >
-          </q-card-section>
-
-          <q-card-actions align="right">
-            <q-btn flat label="Cancelar" color="primary" v-close-popup />
-            <q-btn
-              flat
-              label="Eliminar"
-              color="red"
-              @click="actionOption('delete')"
+          </div>
+          <div v-if="$props.type === 'default'" class="col">
+            <q-select
+              v-model="form.htmlElement"
+              :options="selectValues"
+              label="Tipo de elemento HTML a utilizar"
             />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-    </q-form>
-  </section>
+          </div>
+          <div class="col">
+            <q-input
+              v-model="option"
+              label="Opciones para responder la pregunta"
+              hint="Digite una opción seguida de «enter» para agregarla"
+              @keydown.enter.prevent="addOption($event)"
+              autogrow
+            />
+          </div>
+          <!-- opciones añadidas -->
+          <div class="col q-mt-md" v-if="form.question.options.length">
+            <q-list bordered>
+              <transition-group appear name="lightSpeed">
+                <q-item
+                  dense
+                  v-ripple
+                  v-for="(option, index) in form.question.options"
+                  :key="index"
+                  :class="{
+                    'border-bottom': index + 1 !== form.question.options.length
+                  }"
+                >
+                  <q-item-section>
+                    <q-item-label
+                      class="text-overline text-grey-8 text-weight-light"
+                      >Opción #{{ index + 1 }}</q-item-label
+                    >
+                    <q-item-label
+                      caption
+                      lines="2"
+                      class="text-grey-9"
+                      style="font-size: 14px;"
+                      >{{ option }}</q-item-label
+                    >
+                  </q-item-section>
+
+                  <!-- acciones a ejecutar en las opciones -->
+                  <!-- añadir hijo (solo en preguntas no filtrables) -->
+                  <q-item-section side top v-if="$props.type === 'default'">
+                    <q-item-label caption>
+                      <q-btn
+                        flat
+                        icon="add"
+                        round
+                        size="sm"
+                        color="teal"
+                        @click="$emit('addchild')"
+                      >
+                        <q-tooltip>Añadir pregunta hija</q-tooltip>
+                      </q-btn>
+                    </q-item-label>
+                  </q-item-section>
+                  <!-- editar -->
+                  <q-item-section side top style="padding-left: 0;">
+                    <q-item-label caption>
+                      <q-btn
+                        flat
+                        icon="edit"
+                        round
+                        size="sm"
+                        color="teal"
+                        @click="openDialogOptionAction(option, index, 'edit')"
+                      >
+                        <q-tooltip>Editar opción</q-tooltip>
+                      </q-btn>
+                    </q-item-label>
+                  </q-item-section>
+                  <!-- eliminar -->
+                  <q-item-section side top style="padding-left: 0;">
+                    <q-item-label caption>
+                      <q-btn
+                        flat
+                        icon="delete"
+                        color="red"
+                        round
+                        size="sm"
+                        @click="openDialogOptionAction(option, index, 'delete')"
+                      >
+                        <q-tooltip>Eliminar opción</q-tooltip>
+                      </q-btn>
+                    </q-item-label>
+                  </q-item-section>
+                  <!-- fin acciones a ejecutar en las opciones -->
+                </q-item>
+              </transition-group>
+            </q-list>
+          </div>
+          <!-- fin opciones añadidas -->
+        </div>
+      </q-form>
+    </q-card-section>
+    <!-- fin contenido -->
+
+    <!-- dialog para modificar una opción -->
+    <q-dialog v-model="dialog.editOption.open" persistent>
+      <q-card style="min-width: 400px">
+        <q-card-section>
+          <div class="text-h6">Tu nuevo valor</div>
+        </q-card-section>
+
+        <q-card-section>
+          <q-input
+            dense
+            v-model="dialog.editOption.text"
+            autofocus
+            @keyup.enter="actionOption('edit')"
+          />
+        </q-card-section>
+
+        <q-card-actions align="right" class="text-primary">
+          <q-btn flat label="Cancelar" v-close-popup />
+          <q-btn flat label="Confirmar" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <!-- diálogo para eliminar una opción -->
+    <q-dialog v-model="dialog.deleteOption" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="delete" color="primary" text-color="white" />
+          <span class="q-ml-sm"
+            >¿Está seguro de eliminar la opción actual?</span
+          >
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Cancelar" color="primary" v-close-popup />
+          <q-btn
+            flat
+            label="Eliminar"
+            color="red"
+            @click="actionOption('delete')"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  </q-card>
 </template>
 
 <script lang="ts">
-import { value } from 'vue-function-api';
+import { value, onCreated, PropType } from 'vue-function-api';
 import { Context } from 'vue-function-api/dist/types/vue';
 import {
   Form,
-  QuestionAddDialog
+  QuestionAddDialog,
+  QuestionAddProps
 } from '../types/components/question-add-item.interface';
+import { PropValidator, RecordPropsDefinition } from 'vue/types/options';
 
 export default {
   props: {
-    type: { type: String, required: true }
+    type: { type: String, required: true },
+    title: { type: String, required: false }
   },
   setup(props: any, ctx: Context) {
     /* ------------ state --------- */
@@ -165,9 +203,12 @@ export default {
     const selectValues = value<string[]>(['Select', 'Radio']);
     // dialog
     const dialog = value<QuestionAddDialog>({
+      parent: false,
       editOption: { open: false, text: '', index: -1 },
       deleteOption: false
     });
+
+    /* ----------- cycle life ------- */
 
     /* ----------- methods --------- */
     function addOption(e: KeyboardEvent) {

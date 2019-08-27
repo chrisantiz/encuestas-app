@@ -14,6 +14,7 @@ export interface Question {
 export interface QuestionAddDialog {
   editOption: DialogEditOption;
   deleteOption: boolean;
+  parent: boolean;
 }
 
 /** diálogo para editar una opción (posible respuesta) */
@@ -21,4 +22,10 @@ export interface DialogEditOption {
   open: boolean;
   text: string;
   index: number;
+}
+
+/** props del componente */
+export interface QuestionAddProps {
+  type: 'filter' | 'default';
+  title?: string;
 }

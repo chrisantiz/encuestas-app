@@ -29,11 +29,19 @@
                 >
                   <q-card class="card-expantion-panel">
                     <q-card-section>
-                      <p
-                        class="text-caption text-weight-light"
-                      >Serán aquellas preguntas por las cuales usted busca identificar a su encuestado; ejemplo: ciudad, edad, sexo etcétera. Con estos datos luego podrá filtrar y obtener sus resultados (ya tabulados) apuntando a cierta población.</p>
+                      <p class="text-caption text-weight-light">
+                        Serán aquellas preguntas por las cuales usted busca
+                        identificar a su encuestado; ejemplo: ciudad, edad, sexo
+                        etcétera. Con estos datos luego podrá filtrar y obtener
+                        sus resultados (ya tabulados) apuntando a cierta
+                        población.
+                      </p>
                       <!-- añadir nueva pregunta filtrable -->
-                      <q-btn label="Añadir" icon="add" @click="openModalAddQuestion('filter')" />
+                      <q-btn
+                        label="Añadir"
+                        icon="add"
+                        @click="openModalAddQuestion('filter')"
+                      />
                       <q-separator class="q-my-md" />
                     </q-card-section>
                   </q-card>
@@ -48,11 +56,16 @@
                 >
                   <q-card class="card-expantion-panel">
                     <q-card-section>
-                      <p
-                        class="text-caption text-weight-light"
-                      >Añada los puntos sobre los cuales quiere obtener la opinión del encuestado.</p>
+                      <p class="text-caption text-weight-light">
+                        Añada los puntos sobre los cuales quiere obtener la
+                        opinión del encuestado.
+                      </p>
                       <!-- añadir nueva pregunta filtrable -->
-                      <q-btn label="Añadir" icon="add" @click="openModalAddQuestion('default')" />
+                      <q-btn
+                        label="Añadir"
+                        icon="add"
+                        @click="openModalAddQuestion('default')"
+                      />
                       <q-separator class="q-my-md" />
                     </q-card-section>
                   </q-card>
@@ -65,25 +78,13 @@
     </q-card>
 
     <!-- modal para agregar nueva pregunta -->
-    <q-dialog v-model="dialog.addQuestion">
-      <q-card class="bg-white" style="overflow: hidden;">
-        <q-toolbar>
-          <q-avatar>
-            <q-icon name="add" />
-          </q-avatar>
+    <q-dialog v-model="dialog.addQuestion" persistent>
+      <QuestionAddItem :type="questionType" title="Hola mundo" @addchild="onAddNewChild" />
+    </q-dialog>
 
-          <q-toolbar-title>
-            <span class="text-weight-bold">Añadir</span>
-            pregunta ({{ questionType === 'filter' ? 'filtrable' : 'encuesta' }})
-          </q-toolbar-title>
-
-          <q-btn flat round dense icon="close" v-close-popup />
-        </q-toolbar>
-
-        <q-card-section>
-          <QuestionAddItem :type="questionType" />
-        </q-card-section>
-      </q-card>
+    <!-- modal para agregar pregunta hija -->
+    <q-dialog v-model="dialog.addQuestionChild" persistent>
+      <QuestionAddItem :type="questionType" title="Pregunta hija" />
     </q-dialog>
   </q-page>
 </template>
@@ -100,7 +101,7 @@ export default {
     /** abrir automáticamente el item de preguntas filtrables */
     const expandedItem = value(true);
     /** dialogs */
-    const dialog = value({ addQuestion: false });
+    const dialog = value({ addQuestion: false, addQuestionChild: false });
     /** tipo de pregunta a agregar */
     const questionType = value<'filter' | 'default'>('filter');
 
@@ -114,12 +115,18 @@ export default {
       questionType.value = type;
     }
 
+    /** una pregunta hija añadida */
+    function onAddNewChild() {
+      dialog.value.addQuestionChild = true;
+    }
+
     return {
       newPoll,
       expandedItem,
       dialog,
       questionType,
-      openModalAddQuestion
+      openModalAddQuestion,
+      onAddNewChild
     };
   }
 };
