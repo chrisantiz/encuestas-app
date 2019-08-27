@@ -66,7 +66,7 @@
 
     <!-- modal para agregar nueva pregunta -->
     <q-dialog v-model="dialog.addQuestion">
-      <q-card class="bg-white">
+      <q-card class="bg-white" style="overflow: hidden;">
         <q-toolbar>
           <q-avatar>
             <q-icon name="add" />

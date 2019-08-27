@@ -26,55 +26,70 @@
             autogrow
           />
         </div>
-        <q-list>
-          <q-item v-for="(option, index) in form.question.options" :key="index">
-            <q-item-section>
-              <q-item-label class="text-overline text-weight-light"
-                >Opción #{{ index + 1 }}</q-item-label
+        <!-- opciones añadidas -->
+        <div class="col">
+          <q-list bordered separator>
+            <transition-group appear name="lightSpeed">
+              <q-item
+                dense
+                v-ripple
+                v-for="(option, index) in form.question.options"
+                :key="index"
+                :class="{
+                  'border-bottom': index + 1 !== form.question.options.length
+                }"
               >
-              <q-item-label
-                caption
-                lines="2"
-                class="text-body1 text-weight-bold"
-                >{{ option }}</q-item-label
-              >
-            </q-item-section>
+                <q-item-section>
+                  <q-item-label
+                    class="text-overline text-grey-8 text-weight-light"
+                    >Opción #{{ index + 1 }}</q-item-label
+                  >
+                  <q-item-label
+                    caption
+                    lines="2"
+                    class="text-grey-9"
+                    style="font-size: 14px;"
+                    >{{ option }}</q-item-label
+                  >
+                </q-item-section>
 
-            <!-- acciones a ejecutar en las opciones -->
-            <!-- editar -->
-            <q-item-section side top>
-              <q-item-label caption>
-                <q-btn
-                  flat
-                  icon="edit"
-                  round
-                  size="sm"
-                  color="teal"
-                  @click="openDialogOptionAction(option, index, 'edit')"
-                >
-                  <q-tooltip>Editar opción</q-tooltip>
-                </q-btn>
-              </q-item-label>
-            </q-item-section>
-            <!-- eliminar -->
-            <q-item-section side top style="padding-left: 0;">
-              <q-item-label caption>
-                <q-btn
-                  flat
-                  icon="delete"
-                  color="red"
-                  round
-                  size="sm"
-                  @click="openDialogOptionAction(option, index, 'delete')"
-                >
-                  <q-tooltip>Eliminar opción</q-tooltip>
-                </q-btn>
-              </q-item-label>
-            </q-item-section>
-            <!-- acciones a ejecutar en las opciones -->
-          </q-item>
-          <q-separator></q-separator>
-        </q-list>
+                <!-- acciones a ejecutar en las opciones -->
+                <!-- editar -->
+                <q-item-section side top>
+                  <q-item-label caption>
+                    <q-btn
+                      flat
+                      icon="edit"
+                      round
+                      size="sm"
+                      color="teal"
+                      @click="openDialogOptionAction(option, index, 'edit')"
+                    >
+                      <q-tooltip>Editar opción</q-tooltip>
+                    </q-btn>
+                  </q-item-label>
+                </q-item-section>
+                <!-- eliminar -->
+                <q-item-section side top style="padding-left: 0;">
+                  <q-item-label caption>
+                    <q-btn
+                      flat
+                      icon="delete"
+                      color="red"
+                      round
+                      size="sm"
+                      @click="openDialogOptionAction(option, index, 'delete')"
+                    >
+                      <q-tooltip>Eliminar opción</q-tooltip>
+                    </q-btn>
+                  </q-item-label>
+                </q-item-section>
+                <!-- fin acciones a ejecutar en las opciones -->
+              </q-item>
+            </transition-group>
+          </q-list>
+        </div>
+        <!-- fin opciones añadidas -->
       </div>
 
       <!-- dialog para modificar una opción -->
@@ -212,5 +227,8 @@ export default {
 };
 </script>
 
-<style>
+<style lang="stylus" scoped>
+.border-bottom {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
 </style>
