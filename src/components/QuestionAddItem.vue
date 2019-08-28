@@ -15,7 +15,7 @@
 
     <!-- contenido -->
     <q-card-section>
-      <q-form>
+      <q-form ref="form">
         <div class="column q-gutter-md">
           <!-- información de la pregunta (y respuesta) padre -->
           <div
@@ -25,11 +25,12 @@
             <p class="text-center text-body1 text-weight-light">
               Pregunta padre
             </p>
-            <p class="text-center text-body2 q-my-none">¿Tiene usted hijos?</p>
-            <p class="text-center text-weight-light">
-              Sí, un motón de hijos de puta
+            <p class="text-center text-body2 q-my-none">
+              {{ $props.questionParent.question }}
             </p>
-            <!-- <p class="text-center text-weight-regular">Sí</p> -->
+            <p class="text-center text-weight-light">
+              {{ $props.questionParent.answer }}
+            </p>
           </div>
           <div class="col">
             <q-input
@@ -37,6 +38,7 @@
               autofocus
               autogrow
               label="Ingrese la pregunta a realizar"
+              :rules="[v => !!v || 'Campo obligatorio']"
             />
           </div>
           <div class="col">
@@ -46,6 +48,7 @@
               hint="Digite una opción seguida de «enter» para agregarla"
               @keydown.enter.prevent="addOption($event)"
               autogrow
+              :rules="[validateOptions]"
             />
           </div>
           <!-- opciones añadidas -->
@@ -132,6 +135,14 @@
     </q-card-section>
     <!-- fin contenido -->
 
+    <q-card-section>
+      <q-btn
+        label="Agregar"
+        icon="add_circle_outline"
+        @click="onClickAddItem"
+      />
+    </q-card-section>
+
     <!-- dialog para modificar una opción -->
     <q-dialog v-model="dialog.editOption.open" persistent>
       <q-card style="min-width: 400px">
@@ -185,13 +196,15 @@ import { Context } from 'vue-function-api/dist/types/vue';
 import {
   Form,
   QuestionAddDialog,
-  QuestionAddProps
+  QuestionAddProps,
+  PropsQuestionAdd
 } from '../types/components/question-add-item.interface';
 import { PropValidator, RecordPropsDefinition } from 'vue/types/options';
 
 export default {
   props: {
-    type: { type: String, required: true }
+    type: { type: String, required: true },
+    questionParent: { type: Object, required: false }
   },
   setup(props: any, ctx: Context) {
     /* ------------ state --------- */
@@ -211,7 +224,7 @@ export default {
     /* ------------ computed --------- */
     const title = computed(() => {
       let str = '';
-      switch (props.type) {
+      switch ((props as PropsQuestionAdd).type) {
         case 'filter':
           str = 'filtrable';
           break;
@@ -231,6 +244,30 @@ export default {
     /* ----------- cycle life ------- */
 
     /* ----------- methods --------- */
+    /** validar que se hayan ingresado opciones */
+    function validateOptions(value: string) {
+      return (
+        form.value.question.options.length > 1 ||
+        'Debe añadir por lo menos 2 opciones por pregunta'
+      );
+    }
+    /** evento click al guardar un ítem */
+    async function onClickAddItem() {
+      const success = await (ctx.refs.form as any).validate();
+      if (!success) return;
+
+      switch ((props as PropsQuestionAdd).type) {
+        case 'filter':
+          break;
+
+        case 'default':
+          break;
+
+        case 'child':
+          break;
+      }
+    }
+    /** añadir una nueva opción */
     function addOption(e: KeyboardEvent) {
       e.preventDefault();
       const { options } = form.value.question;
@@ -282,7 +319,9 @@ export default {
       dialog,
       openDialogOptionAction,
       actionOption,
-      title
+      title,
+      onClickAddItem,
+      validateOptions
     };
   }
 };
