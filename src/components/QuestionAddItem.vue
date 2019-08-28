@@ -19,7 +19,7 @@
         <div class="column q-gutter-md">
           <!-- información de la pregunta (y respuesta) padre -->
           <div
-            v-if="$props.type === 'child'"
+            v-if="$props.type === 'child' && $props.questionParent"
             class="col bg-teal-1 border-radius"
           >
             <p class="text-center text-body1 text-weight-light">
@@ -88,7 +88,7 @@
                         round
                         size="sm"
                         color="teal"
-                        @click="$emit('addchild')"
+                        @click="addChildren(index, option)"
                       >
                         <q-tooltip>Añadir pregunta hija</q-tooltip>
                       </q-btn>
@@ -134,6 +134,8 @@
       </q-form>
     </q-card-section>
     <!-- fin contenido -->
+
+    <pre>{{$props.questionParent}}</pre>
 
     <q-card-section>
       <q-btn
@@ -197,7 +199,8 @@ import {
   Form,
   QuestionAddDialog,
   QuestionAddProps,
-  PropsQuestionAdd
+  PropsQuestionAdd,
+  QuestionParent
 } from '../types/components/question-add-item.interface';
 import { PropValidator, RecordPropsDefinition } from 'vue/types/options';
 
@@ -244,6 +247,17 @@ export default {
     /* ----------- cycle life ------- */
 
     /* ----------- methods --------- */
+    /** agregar preguntas hijas (evento) */
+    function addChildren(index: number, answer: string) {
+      const question: QuestionParent = {
+        index,
+        question: form.value.question.title,
+        answer
+      };
+      // emitir evento
+      ctx.emit('addchild', question);
+    }
+
     /** validar que se hayan ingresado opciones */
     function validateOptions(value: string) {
       return (
@@ -253,6 +267,7 @@ export default {
     }
     /** evento click al guardar un ítem */
     async function onClickAddItem() {
+      // validar el formulario
       const success = await (ctx.refs.form as any).validate();
       if (!success) return;
 
@@ -321,7 +336,8 @@ export default {
       actionOption,
       title,
       onClickAddItem,
-      validateOptions
+      validateOptions,
+      addChildren
     };
   }
 };

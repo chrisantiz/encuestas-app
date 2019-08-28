@@ -84,7 +84,7 @@
 
     <!-- modal para agregar pregunta hija -->
     <q-dialog v-model="dialog.addQuestionChild" persistent>
-      <QuestionAddItem type="child" />
+      <QuestionAddItem type="child" :question-parent="questionParent" />
     </q-dialog>
   </q-page>
 </template>
@@ -92,6 +92,7 @@
 <script lang="ts">
 import { value } from 'vue-function-api';
 import QuestionAddItem from '../components/QuestionAddItem.vue';
+import { QuestionParent } from '../types/components/question-add-item.interface';
 export default {
   components: { QuestionAddItem },
   setup() {
@@ -104,6 +105,8 @@ export default {
     const dialog = value({ addQuestion: false, addQuestionChild: false });
     /** tipo de pregunta a agregar */
     const questionType = value<'filter' | 'default'>('filter');
+    /** datos de una pregunta padre */
+    const questionParent = value<QuestionParent | null>(null);
 
     /* ---------- computed -------- */
 
@@ -116,7 +119,8 @@ export default {
     }
 
     /** una pregunta hija añadida */
-    function onAddNewChild() {
+    function onAddNewChild(data: QuestionParent) {
+      questionParent.value = data;
       dialog.value.addQuestionChild = true;
     }
 
@@ -126,7 +130,8 @@ export default {
       dialog,
       questionType,
       openModalAddQuestion,
-      onAddNewChild
+      onAddNewChild,
+      questionParent
     };
   }
 };

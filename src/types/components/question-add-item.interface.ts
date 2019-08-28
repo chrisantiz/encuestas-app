@@ -70,6 +70,7 @@ export interface AnswerOptionComplex extends AnswerOption {
 
 /** pregunta padre */
 export interface QuestionParent {
+  index: number;
   question: string;
   answer: string;
 }
