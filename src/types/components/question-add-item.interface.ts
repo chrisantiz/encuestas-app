@@ -40,7 +40,7 @@ export interface QuestionItem {
   type: 'filter' | 'default' | 'child';
   data: {
     question: string;
-    options: AnswerOptionComplex[];
+    options: AnswerOptionChildren[];
   };
 }
 
@@ -61,7 +61,7 @@ export interface AnswerOption {
 }
 
 /** propiedades de una opción de respuesta con posibles preguntas hijas */
-export interface AnswerOptionComplex extends AnswerOption {
+export interface AnswerOptionChildren extends AnswerOption {
   children?: {
     question: string;
     options: AnswerOption[];
