@@ -1,6 +1,6 @@
 <template>
-  <q-card class="bg-white" style="overflow: hidden;">
-    <q-toolbar>
+  <q-card class="bg-white" style="overflow-x: hidden;">
+    <q-toolbar class="bg-primary text-white">
       <q-avatar>
         <q-icon name="add" />
       </q-avatar>
@@ -53,15 +53,14 @@
           </div>
           <!-- opciones añadidas -->
           <div class="col q-mt-md" v-if="form.question.options.length">
-            <q-list bordered>
+            <q-list>
               <transition-group appear name="lightSpeed">
                 <q-item
                   dense
-                  v-ripple
                   v-for="(option, index) in form.question.options"
                   :key="index"
                   :class="{
-                    'border-bottom': index + 1 !== form.question.options.length
+                    'border-bottom': index + 1 !== form.question.options.length,
                   }"
                 >
                   <q-item-section>
@@ -79,52 +78,63 @@
                   </q-item-section>
 
                   <!-- acciones a ejecutar en las opciones -->
-                  <!-- añadir hijo (solo en preguntas no filtrables) -->
-                  <q-item-section side top v-if="$props.type === 'default'">
-                    <q-item-label caption>
+                  <q-item-section side>
+                    <q-btn-group flat>
+                      <!-- añadir hijo (solo en preguntas no filtrables) -->
                       <q-btn
-                        flat
+                        v-if="$props.type === 'default'"
                         icon="add"
-                        round
                         size="sm"
-                        color="teal"
+                        class="q-px-sm text-green"
+                        color="green-1"
                         @click="addChildren(index, option)"
                       >
-                        <q-tooltip>Añadir pregunta hija</q-tooltip>
+                        <q-tooltip
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[10, 10]"
+                          content-style="font-size: 12px"
+                          content-class="bg-green"
+                          >Añadir pregunta hija</q-tooltip
+                        >
                       </q-btn>
-                    </q-item-label>
-                  </q-item-section>
-                  <!-- editar -->
-                  <q-item-section side top style="padding-left: 0;">
-                    <q-item-label caption>
+                      <!-- editar -->
                       <q-btn
-                        flat
                         icon="edit"
-                        round
                         size="sm"
-                        color="teal"
+                        class="q-px-sm text-orange"
+                        color="orange-1"
                         @click="openDialogOptionAction(option, index, 'edit')"
                       >
-                        <q-tooltip>Editar opción</q-tooltip>
+                        <q-tooltip
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[10, 10]"
+                          content-style="font-size: 12px"
+                          content-class="bg-orange"
+                          >Editar opción</q-tooltip
+                        >
                       </q-btn>
-                    </q-item-label>
-                  </q-item-section>
-                  <!-- eliminar -->
-                  <q-item-section side top style="padding-left: 0;">
-                    <q-item-label caption>
+                      <!-- eliminar -->
                       <q-btn
-                        flat
                         icon="delete"
-                        color="red"
-                        round
                         size="sm"
+                        class="q-px-sm text-red"
+                        color="red-1"
                         @click="openDialogOptionAction(option, index, 'delete')"
                       >
-                        <q-tooltip>Eliminar opción</q-tooltip>
+                        <q-tooltip
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[10, 10]"
+                          content-style="font-size: 12px"
+                          content-class="bg-red"
+                          >Eliminar opción</q-tooltip
+                        >
                       </q-btn>
-                    </q-item-label>
+                    </q-btn-group>
+                    <!-- fin acciones a ejecutar en las opciones -->
                   </q-item-section>
-                  <!-- fin acciones a ejecutar en las opciones -->
                 </q-item>
               </transition-group>
             </q-list>
@@ -135,14 +145,33 @@
     </q-card-section>
     <!-- fin contenido -->
 
-    <pre>{{$props.questionParent}}</pre>
+    <!-- <pre>{{ $props.questionParent }}</pre> -->
 
-    <q-card-section>
-      <q-btn
-        label="Agregar"
-        icon="add_circle_outline"
-        @click="onClickAddItem"
-      />
+    <q-card-section class="bg-blue-1 q-pa-none q-mt-xs">
+      <div class="row justify-between">
+        <div class="col">
+          <q-btn label="confirmar" flat @click="onClickAddItem">
+            <q-tooltip
+              anchor="top middle"
+              self="bottom middle"
+              :offset="[10, 10]"
+              content-style="font-size:12px;"
+              >Añadir pregunta actual a la encuesta</q-tooltip
+            >
+          </q-btn>
+        </div>
+        <div class="col text-right">
+          <q-btn icon="visibility" flat @click="onClickAddItem">
+            <q-tooltip
+              anchor="top middle"
+              self="bottom middle"
+              :offset="[10, 10]"
+              content-style="font-size:12px;"
+              >Previsualizar</q-tooltip
+            >
+          </q-btn>
+        </div>
+      </div>
     </q-card-section>
 
     <!-- dialog para modificar una opción -->
@@ -200,20 +229,20 @@ import {
   QuestionAddDialog,
   QuestionAddProps,
   PropsQuestionAdd,
-  QuestionParent
+  QuestionParent,
 } from '../types/components/question-add-item.interface';
 import { PropValidator, RecordPropsDefinition } from 'vue/types/options';
 
 export default {
   props: {
     type: { type: String, required: true },
-    questionParent: { type: Object, required: false }
+    questionParent: { type: Object, required: false },
   },
   setup(props: any, ctx: Context) {
     /* ------------ state --------- */
     /** propiedades de una nueva pregunta */
     const form = value<Form>({
-      question: { title: '', options: [] }
+      question: { title: '', options: [] },
     });
     /* opción digitada por el usuario */
     const option = value('');
@@ -221,7 +250,7 @@ export default {
     const dialog = value<QuestionAddDialog>({
       parent: false,
       editOption: { open: false, text: '', index: -1 },
-      deleteOption: false
+      deleteOption: false,
     });
 
     /* ------------ computed --------- */
@@ -252,7 +281,7 @@ export default {
       const question: QuestionParent = {
         index,
         question: form.value.question.title,
-        answer
+        answer,
       };
       // emitir evento
       ctx.emit('addchild', question);
@@ -296,7 +325,7 @@ export default {
     function openDialogOptionAction(
       option: string,
       index: number,
-      action: 'delete' | 'edit'
+      action: 'delete' | 'edit',
     ) {
       // pasarle el valor al input
       dialog.value.editOption.text = option;
@@ -337,9 +366,9 @@ export default {
       title,
       onClickAddItem,
       validateOptions,
-      addChildren
+      addChildren,
     };
-  }
+  },
 };
 </script>
 
