@@ -80,13 +80,34 @@
                   <!-- acciones a ejecutar en las opciones -->
                   <q-item-section side>
                     <q-btn-group flat>
+                      <!-- respuesta personalizada (última opción) -->
+                      <q-btn
+                        v-if="
+                          $props.type === 'default' &&
+                            index + 1 === form.question.options.length
+                        "
+                        icon="insert_comment"
+                        size="sm"
+                        class="q-px-sm text-blue"
+                        color="blue-1"
+                        @click="addCustomAnswer"
+                      >
+                        <q-tooltip
+                          anchor="top middle"
+                          self="bottom middle"
+                          :offset="[10, 10]"
+                          content-style="font-size: 12px"
+                          content-class="bg-blue"
+                          >Respuesta personalizada</q-tooltip
+                        >
+                      </q-btn>
                       <!-- añadir hijo (solo en preguntas no filtrables) -->
                       <q-btn
                         v-if="$props.type === 'default'"
                         icon="add"
                         size="sm"
-                        class="q-px-sm text-green"
-                        color="green-1"
+                        class="q-px-sm text-orange"
+                        color="orange-1"
                         @click="addChildren(index, option)"
                       >
                         <q-tooltip
@@ -94,7 +115,7 @@
                           self="bottom middle"
                           :offset="[10, 10]"
                           content-style="font-size: 12px"
-                          content-class="bg-green"
+                          content-class="bg-orange"
                           >Añadir pregunta hija</q-tooltip
                         >
                       </q-btn>
@@ -102,8 +123,8 @@
                       <q-btn
                         icon="edit"
                         size="sm"
-                        class="q-px-sm text-orange"
-                        color="orange-1"
+                        class="q-px-sm text-teal"
+                        color="teal-1"
                         @click="openDialogOptionAction(option, index, 'edit')"
                       >
                         <q-tooltip
@@ -111,7 +132,7 @@
                           self="bottom middle"
                           :offset="[10, 10]"
                           content-style="font-size: 12px"
-                          content-class="bg-orange"
+                          content-class="bg-teal"
                           >Editar opción</q-tooltip
                         >
                       </q-btn>
@@ -276,6 +297,10 @@ export default {
     /* ----------- cycle life ------- */
 
     /* ----------- methods --------- */
+    /** añadir respuesta personalizada (solo en la última opción) */
+    function addCustomAnswer() {
+      console.log('¡AÑADIR RESPUESTA PERSONALZADA!')
+    }
     /** agregar preguntas hijas (evento) */
     function addChildren(index: number, answer: string) {
       const question: QuestionParent = {
@@ -299,6 +324,8 @@ export default {
       // validar el formulario
       const success = await (ctx.refs.form as any).validate();
       if (!success) return;
+
+      console.log('¡BIEN!');
 
       switch ((props as PropsQuestionAdd).type) {
         case 'filter':
@@ -367,6 +394,7 @@ export default {
       onClickAddItem,
       validateOptions,
       addChildren,
+      addCustomAnswer
     };
   },
 };

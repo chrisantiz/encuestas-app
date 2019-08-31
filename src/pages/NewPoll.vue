@@ -25,13 +25,13 @@
                   header-class="text-teal-10"
                   expand-separator
                   icon="perm_identity"
-                  label="Preguntas filtrables"
+                  label="Preguntas personales (filtrables)"
                 >
                   <q-card class="card-expantion-panel">
                     <q-card-section>
                       <p class="text-caption text-weight-light">
                         Serán aquellas preguntas por las cuales usted busca
-                        identificar a su encuestado; ejemplo: ciudad, edad, sexo
+                        identificar a su encuestado. Ejemplo: ciudad, edad, sexo
                         etcétera. Con estos datos luego podrá filtrar y obtener
                         sus resultados (ya tabulados) apuntando a cierta
                         población.
