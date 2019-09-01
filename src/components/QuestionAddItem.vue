@@ -358,6 +358,7 @@ export default {
           break;
 
         case 'child':
+          ctx.root.$store.commit('SET_ITEM_CHILD', form.value);
           break;
       }
     }
@@ -426,7 +427,7 @@ export default {
       validateOptions,
       addChildren,
       addCustomAnswer,
-      optionId
+      optionId,
     };
   },
 };

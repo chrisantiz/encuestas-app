@@ -90,12 +90,16 @@
 </template>
 
 <script lang="ts">
-import { value } from 'vue-function-api';
+import { value, watch, onCreated, computed } from 'vue-function-api';
 import QuestionAddItem from '../components/QuestionAddItem.vue';
 import { QuestionParent } from '../types/components/question-add-item.interface';
+import { Context } from 'vue-function-api/dist/types/vue';
+import { mapGetters } from 'vuex';
+import { useBuilder } from '../hooks/builder';
+
 export default {
   components: { QuestionAddItem },
-  setup() {
+  setup(props: any, ctx: Context) {
     /* --------- state ------- */
     /** datos de la nueva encuesta */
     const newPoll = value({ name: '' });
@@ -109,6 +113,27 @@ export default {
     const questionParent = value<QuestionParent | null>(null);
 
     /* ---------- computed -------- */
+    const x = computed(() => mapGetters(['builder/getChildItem']));
+    const { name, setName } = useBuilder();
+
+    /** --------- watchers --------- */
+    // watch(
+    //   () => ctx.root.$store,
+    //   (newVal, oldval) => {
+    //     console.log('new val: ', newVal);
+    //     console.log('old val: ', oldval);
+    //   },
+    // );
+
+    /* ---------- cyclelife ------ */
+    onCreated(() => {
+      // console.log(ctx.root.$store.getters['builder/getChildItem']);
+      console.log(name.value);
+      setTimeout(() => {
+        setName('El nombre más perrón');
+        console.log(name.value);
+      }, 2000);
+    });
 
     /* ---------- methods -------- */
 
@@ -131,9 +156,10 @@ export default {
       questionType,
       openModalAddQuestion,
       onAddNewChild,
-      questionParent
+      questionParent,
+      name
     };
-  }
+  },
 };
 </script>
 
