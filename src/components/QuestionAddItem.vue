@@ -34,7 +34,7 @@
           </div>
           <div class="col">
             <q-input
-              v-model="form.question.title"
+              v-model="form.question"
               autofocus
               autogrow
               label="Ingrese la pregunta a realizar"
@@ -43,38 +43,48 @@
           </div>
           <div class="col">
             <q-input
-              v-model="option"
+              v-model="optionLabel"
               label="Opciones para responder la pregunta"
               hint="Digite una opción seguida de «enter» para agregarla"
-              @keydown.enter.prevent="addOption($event)"
+              @keydown.enter.prevent="
+                addOption($event, {
+                  id: optionId,
+                  label: optionLabel,
+                  count: 0,
+                  children: [],
+                })
+              "
               autogrow
               :rules="[validateOptions]"
             />
           </div>
           <!-- opciones añadidas -->
-          <div class="col q-mt-md" v-if="form.question.options.length">
+          <div class="col q-mt-md" v-if="form.options.length">
             <q-list>
               <transition-group appear name="lightSpeed">
                 <q-item
                   dense
-                  v-for="(option, index) in form.question.options"
+                  v-for="(option, index) in form.options"
                   :key="index"
                   :class="{
-                    'border-bottom': index + 1 !== form.question.options.length,
+                    'border-bottom': index + 1 !== form.options.length,
                   }"
                 >
                   <q-item-section>
                     <q-item-label
                       class="text-overline text-grey-8 text-weight-light"
-                      >Opción #{{ index + 1 }}</q-item-label
+                      >Opción #{{ index + 1 }}
+                      <span v-if="index === 0" class="text-weight-bold"
+                        >Respuesta personalizada</span
+                      ></q-item-label
                     >
                     <q-item-label
                       caption
                       lines="2"
                       class="text-grey-9"
                       style="font-size: 14px;"
-                      >{{ option }}</q-item-label
-                    >
+                      >{{ option.label }}
+                    </q-item-label>
                   </q-item-section>
 
                   <!-- acciones a ejecutar en las opciones -->
@@ -84,7 +94,7 @@
                       <q-btn
                         v-if="
                           $props.type === 'default' &&
-                            index + 1 === form.question.options.length
+                            index + 1 === form.options.length
                         "
                         icon="insert_comment"
                         size="sm"
@@ -108,7 +118,7 @@
                         size="sm"
                         class="q-px-sm text-orange"
                         color="orange-1"
-                        @click="addChildren(index, option)"
+                        @click="addChildren(index, option.label)"
                       >
                         <q-tooltip
                           anchor="top middle"
@@ -166,7 +176,7 @@
     </q-card-section>
     <!-- fin contenido -->
 
-    <!-- <pre>{{ $props.questionParent }}</pre> -->
+    <pre>{{ form }}</pre>
 
     <q-card-section class="bg-blue-1 q-pa-none q-mt-xs">
       <div class="row justify-between">
@@ -253,6 +263,11 @@ import {
   QuestionParent,
 } from '../types/components/question-add-item.interface';
 import { PropValidator, RecordPropsDefinition } from 'vue/types/options';
+import {
+  PollData,
+  Question,
+  OptionChildren,
+} from '../types/vuex/builder-module.interface';
 
 export default {
   props: {
@@ -262,11 +277,16 @@ export default {
   setup(props: any, ctx: Context) {
     /* ------------ state --------- */
     /** propiedades de una nueva pregunta */
-    const form = value<Form>({
-      question: { title: '', options: [] },
+    const form = value<Question>({
+      id: 0,
+      question: '',
+      options: [],
+      others: [],
     });
+
     /* opción digitada por el usuario */
-    const option = value('');
+    const optionLabel = value('');
+
     // dialog
     const dialog = value<QuestionAddDialog>({
       parent: false,
@@ -294,18 +314,21 @@ export default {
       return `Agregar nueva pregunta (${str})`;
     });
 
+    /** colocar un id autoincrementable a cada opción añadida */
+    const optionId = computed(() => form.value.options.length + 1);
+
     /* ----------- cycle life ------- */
 
     /* ----------- methods --------- */
     /** añadir respuesta personalizada (solo en la última opción) */
     function addCustomAnswer() {
-      console.log('¡AÑADIR RESPUESTA PERSONALZADA!')
+      console.log('¡AÑADIR RESPUESTA PERSONALZADA!');
     }
     /** agregar preguntas hijas (evento) */
     function addChildren(index: number, answer: string) {
       const question: QuestionParent = {
         index,
-        question: form.value.question.title,
+        question: form.value.question,
         answer,
       };
       // emitir evento
@@ -315,7 +338,7 @@ export default {
     /** validar que se hayan ingresado opciones */
     function validateOptions(value: string) {
       return (
-        form.value.question.options.length > 1 ||
+        form.value.options.length > 1 ||
         'Debe añadir por lo menos 2 opciones por pregunta'
       );
     }
@@ -339,12 +362,20 @@ export default {
       }
     }
     /** añadir una nueva opción */
-    function addOption(e: KeyboardEvent) {
+    function addOption(e: KeyboardEvent, option: OptionChildren) {
       e.preventDefault();
-      const { options } = form.value.question;
-      if (option.value && !options.includes(option.value)) {
-        form.value.question.options.push(option.value);
-        option.value = '';
+      console.log(option);
+      const { options } = form.value;
+      console.log(options);
+      if (
+        optionLabel.value &&
+        !options.some(
+          val => val.label.toLowerCase() === option.label.toLowerCase(),
+        )
+      ) {
+        form.value.options.push(option);
+        // borrar lo escrito
+        optionLabel.value = '';
       }
     }
 
@@ -370,14 +401,14 @@ export default {
     function actionOption(action: 'delete' | 'edit') {
       const { index, text } = dialog.value.editOption;
       // siempre y cuando se encuentre
-      if (!form.value.question.options[index]) return;
+      if (!form.value.options[index]) return;
 
       if (action === 'edit') {
-        form.value.question.options[index] = text;
+        form.value.options[index].label = text;
         dialog.value.editOption.open = false;
       } else {
         // eliminar
-        form.value.question.options.splice(index, 1);
+        form.value.options.splice(index, 1);
         // cerrar modal
         dialog.value.deleteOption = false;
       }
@@ -385,7 +416,7 @@ export default {
 
     return {
       form,
-      option,
+      optionLabel,
       addOption,
       dialog,
       openDialogOptionAction,
@@ -394,7 +425,8 @@ export default {
       onClickAddItem,
       validateOptions,
       addChildren,
-      addCustomAnswer
+      addCustomAnswer,
+      optionId
     };
   },
 };

@@ -99,7 +99,7 @@ export interface PollData {
   /** preguntas propias de la encuesta */
   questions: Question[];
   /** observaciones */
-  observations: string[] | [];
+  observations: string[];
 }
 
 /** pregunta personal */
@@ -115,7 +115,7 @@ export interface Question {
   question: string;
   options: OptionChildren[];
   /** cuando se agrega un input a una opción para respuesta personalizada */
-  others: OptionOther[] | [];
+  others: OptionOther[];
 }
 
 /** respuesta personalizada, ingresada por el usuario */
@@ -143,7 +143,7 @@ export interface QuestionChild {
 
 /** opciones con preguntas hias */
 export interface OptionChildren extends Option {
-  children: QuestionChild[] | [];
+  children: QuestionChild[];
 }
 
 /** opciones de las preguntas personales (cada una tendrá una encuesta) */

@@ -25,7 +25,7 @@
                   header-class="text-teal-10"
                   expand-separator
                   icon="perm_identity"
-                  label="Preguntas personales (filtrables)"
+                  label="Preguntas personales (opcional)"
                 >
                   <q-card class="card-expantion-panel">
                     <q-card-section>
