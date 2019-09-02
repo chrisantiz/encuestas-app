@@ -181,7 +181,12 @@
     <q-card-section class="bg-blue-1 q-pa-none q-mt-xs">
       <div class="row justify-between">
         <div class="col">
-          <q-btn label="confirmar" flat @click="onClickAddItem">
+          <q-btn
+            label="confirmar"
+            flat
+            @click="onClickAddItem"
+            v-close-popup="closeDialog"
+          >
             <q-tooltip
               anchor="top middle"
               self="bottom middle"
@@ -253,7 +258,7 @@
 </template>
 
 <script lang="ts">
-import { value, onCreated, PropType, computed } from 'vue-function-api';
+import { value, onCreated, PropType, computed, watch } from 'vue-function-api';
 import { Context } from 'vue-function-api/dist/types/vue';
 import {
   Form,
@@ -267,6 +272,7 @@ import {
   PollData,
   Question,
   OptionChildren,
+  QuestionChild,
 } from '../types/vuex/builder-module.interface';
 
 export default {
@@ -274,6 +280,7 @@ export default {
     type: { type: String, required: true },
     questionParent: { type: Object, required: false },
   },
+  // { refs, emit, root: { vuexGetter, $store } }
   setup(props: any, ctx: Context) {
     /* ------------ state --------- */
     /** propiedades de una nueva pregunta */
@@ -293,6 +300,9 @@ export default {
       editOption: { open: false, text: '', index: -1 },
       deleteOption: false,
     });
+
+    /** cerrar dialog (HIJA) */
+    const closeDialog = value(false);
 
     /* ------------ computed --------- */
     const title = computed(() => {
@@ -317,7 +327,39 @@ export default {
     /** colocar un id autoincrementable a cada opción añadida */
     const optionId = computed(() => form.value.options.length + 1);
 
+    /** pregunta hija agregada (HIJA) */
+    const itemChild = computed(
+      () =>
+        ctx.root.vuexGetter<QuestionChild>('builder/getItemChild'),
+    );
+
+    /** --------- watchers --------- */
+    // HIJA
+    watch(
+      () => itemChild.value,
+      (newVal, oldval) => {
+        if ((props as PropsQuestionAdd).type === 'default' && newVal) {
+          // agregar hijo a la opción espeficicada
+
+          // la propiedad ID es el índice de la opción a la cual añadir hijo
+          const { id: index } = newVal;
+
+          // si no se encuentra la opción impedir que continúe
+          if (!form.value.options[index]) return;
+
+          // nuevo ID a asignar a la pregunta
+          const increment = form.value.options[index].children.length + 1;
+
+          // agregar
+          form.value.options[index].children.push({ ...newVal, id: increment });
+          // eliminar el hijo recibido
+          ctx.root.$store.commit('builder/CLEAR_ITEM_CHILD');
+        }
+      },
+    );
+
     /* ----------- cycle life ------- */
+    onCreated(() => {});
 
     /* ----------- methods --------- */
     /** añadir respuesta personalizada (solo en la última opción) */
@@ -348,8 +390,6 @@ export default {
       const success = await (ctx.refs.form as any).validate();
       if (!success) return;
 
-      console.log('¡BIEN!');
-
       switch ((props as PropsQuestionAdd).type) {
         case 'filter':
           break;
@@ -358,7 +398,16 @@ export default {
           break;
 
         case 'child':
-          ctx.root.$store.commit('SET_ITEM_CHILD', form.value);
+          console.log('Entró');
+          const child: QuestionChild = {
+            // ID será el índice de la opción padre
+            id: (props.questionParent as QuestionParent).index,
+            question: form.value.question,
+            count: 0,
+            options: form.value.options,
+          };
+          ctx.root.$store.commit('builder/SET_ITEM_CHILD', child);
+          closeDialog.value = true;
           break;
       }
     }
@@ -428,6 +477,8 @@ export default {
       addChildren,
       addCustomAnswer,
       optionId,
+      closeDialog,
+      itemChild,
     };
   },
 };

@@ -6,7 +6,7 @@ import {
 
 export const getters: InjectGetterState<StateBuilderModule> = {
   /** obtener la pregunta hija trabajada actualmente */
-  getChildItem(state): QuestionChild | null {
+  getItemChild(state): QuestionChild | null {
     return state.itemChild;
   },
 };

@@ -10,7 +10,7 @@ module.exports = function(ctx) {
     },
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
-    boot: ['i18n', 'axios', 'vue-function-api'],
+    boot: ['i18n', 'axios', 'vue-function-api', 'vuex-getter'],
 
     css: ['app.styl'],
 
