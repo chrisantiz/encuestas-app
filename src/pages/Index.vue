@@ -25,11 +25,11 @@
 </template>
 
 <script>
-import { value, onCreated, computed } from 'vue-function-api';
+import { ref, onCreated, computed } from 'vue-function-api';
 
 export default {
   setup(props, ctx) {
-    const message = value('Esta es la nueva API de vue');
+    const message = ref('Esta es la nueva API de vue');
 
     onCreated(() => {
       console.log(process.env.VUE_ROUTER_MODE);

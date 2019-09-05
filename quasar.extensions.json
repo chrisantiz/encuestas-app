@@ -17,6 +17,9 @@
         },
         "spa": {
           "iconHash": "4ccb11f8fcf30f338d32859047fd3ad3"
+        },
+        "electron": {
+          "iconHash": "4ccb11f8fcf30f338d32859047fd3ad3"
         }
       },
       "build": {
@@ -25,6 +28,9 @@
           "splashscreenHash": "f3a37d8ad9d13f082b8489c14e78183f",
           "splashscreenType": "pure",
           "backgroundColor": "#000074"
+        },
+        "electron": {
+          "iconHash": "4ccb11f8fcf30f338d32859047fd3ad3"
         }
       }
     }
