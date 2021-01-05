@@ -12,7 +12,7 @@
   "dependencies": {
     "@quasar/extras": "^1.0.0",
     "animate.css": "^3.7.2",
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "quasar": "^1.0.0",
     "vue-function-api": "^3.0.0-beta.0",
     "vue-i18n": "^8.0.0"
